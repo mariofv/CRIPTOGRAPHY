@@ -5,12 +5,36 @@ import java.io.*;
  */
 public class Main {
     public static void main(String args[]) {
-        String encryptredText = read("2017_09_08_17_45_54_mario.fernandez.Cesar");
-        CaesarDecypher caesarDecrypter = new CaesarDecypher(encryptredText);
-        caesarDecrypter.run();
-        caesarDecrypter.printTexts();
-        System.out.println("La clau es " + caesarDecrypter.getKey());
-        System.out.println("El text es " + caesarDecrypter.getDecyphedText());
+        String encryptredText;
+
+        //CAESAR
+//        encryptredText = read("data/2017_09_08_17_45_54_mario.fernandez.Cesar");
+//        CaesarDecypher caesarDecrypter = new CaesarDecypher(encryptredText);
+//        caesarDecrypter.run();
+//        write("data/MarioFernandezVillalba_" + caesarDecrypter.getKey() + ".Cesar", caesarDecrypter.getDecyphedText());
+
+        //ESCITALO
+//        encryptredText = read("data/2017_09_08_17_45_54_mario.fernandez.Escitalo");
+//        EscitaloDecrypter escitaloDecrypter = new EscitaloDecrypter(encryptredText);
+//        escitaloDecrypter.run();
+//        write("data/MarioFernandezVillalba_" + escitaloDecrypter.getKey().get(0) + 'x' + escitaloDecrypter.getKey().get(1) + ".Escitalo", escitaloDecrypter.getDecryptedText());
+
+        //VIGENERE
+        encryptredText = read("data/2017_09_08_17_45_54_mario.fernandez.Vigenere");
+        VigenereDecrypter vigenereDecrypter = new VigenereDecrypter(encryptredText);
+        vigenereDecrypter.run();
+        write("data/MarioFernandezVillalba_" + vigenereDecrypter.getKey() + ".Vigenere", vigenereDecrypter.getDecryptedText());
+
+    }
+
+    private static void write(String fileName, String text) {
+        try{
+            PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+            writer.print(text);
+            writer.close();
+        } catch (IOException e) {
+            // do something
+        }
     }
 
     private static String read(String path) {
@@ -22,10 +46,16 @@ public class Main {
             e.printStackTrace();
         }
         String line;
+        String text = "";
         try {
-            line = bf.readLine();
+            boolean first = true;
+            while (!((line = bf.readLine()) == null)) {
+                if (first) first = false;
+                else text += '\n';
+                text += line;
+            }
             bf.close();
-            return line;
+            return text;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
