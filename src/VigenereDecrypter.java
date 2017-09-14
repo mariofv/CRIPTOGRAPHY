@@ -9,7 +9,7 @@ public class VigenereDecrypter {
 
     private String cryptogram;
     private String filteredCryptogram;
-    private Map<Integer, Character> nonAlphabetical;
+    private Map<Integer, Queue<Character>> nonAlphabetical;
     private ArrayList<String > mostCommonSubstrings;
     private ArrayList<ArrayList<Integer>> possibleSizesDivisots;
     private int size;
@@ -43,7 +43,10 @@ public class VigenereDecrypter {
                 ++j;
             }
             else {
-                nonAlphabetical.put(j,c);
+                if (!nonAlphabetical.containsKey(j)) {
+                    nonAlphabetical.put(j, new LinkedList<Character>());
+                }
+                nonAlphabetical.get(j).add(c);
             }
         }
     }
@@ -162,7 +165,9 @@ public class VigenereDecrypter {
     private void generatePossibleKeys() {
         possibleKeys = new ArrayList<>();
         char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-        iterate(chars, new char[size], 0);
+        char[] paraula = {'e','y','e','s'};
+
+        iterate(chars, paraula, 4);
     }
 
     private void iterate(char[] chars, char[] build, int pos) {
@@ -180,27 +185,36 @@ public class VigenereDecrypter {
     private void computeDecyphedTexts() {
         decyphedTexts = new ArrayList<>();
         for (int i = 0; i < possibleKeys.size(); ++i) {
-            System.out.println("Estoy en la iteracion " + i + " de " + possibleKeys.size());
             String possibleKey = possibleKeys.get(i);
             int actKeyChar = 0;
             String decryptedText = "";
             for (int j = 0; j < filteredCryptogram.length(); ++j) {
                 char c = filteredCryptogram.charAt(j);
                 if (nonAlphabetical.containsKey(j)) {
-                    decryptedText += nonAlphabetical.get(j);
+                    for (char x :  nonAlphabetical.get(j).toArray(new Character[0])) {
+                        decryptedText += x;
+                    }
                 }
-                char decryptedLetter = (char)(c - possibleKey.charAt(actKeyChar));
+                char decryptedLetter;
                 if (c >= 'A' && c <= 'Z') {
+                    decryptedLetter = (char)(c - Character.toUpperCase(possibleKey.charAt(actKeyChar)) + 'A');
                     if (decryptedLetter < 'A') decryptedLetter = (char)(decryptedLetter + 26);
                 }
                 else {
+                    decryptedLetter = (char)(c - possibleKey.charAt(actKeyChar) + 'a');
                     if (decryptedLetter < 'a') decryptedLetter = (char)(decryptedLetter + 26);
                 }
                 decryptedText += decryptedLetter;
                 ++actKeyChar;
                 if (actKeyChar >= possibleKey.length()) actKeyChar = 0;
             }
+            if (nonAlphabetical.containsKey(filteredCryptogram.length())) {
+                for (char x :  nonAlphabetical.get(filteredCryptogram.length()).toArray(new Character[0])) {
+                    decryptedText += x;
+                }
+            }
             decyphedTexts.add(decryptedText);
+            System.out.println(i + "/" + possibleKeys.size());
         }
     }
 
