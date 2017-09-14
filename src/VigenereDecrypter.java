@@ -53,9 +53,9 @@ public class VigenereDecrypter {
         //TODO: Encontrar las 3 substrings mas comunes de mas de 3 letras
 
         Map<String, Integer> map = new HashMap<>();
-        int limit = filteredCryptogram.length() - 7 + 1;
+        int limit = cryptogram.length() - 5 + 1;
         for (int i = 0; i < limit; i++) {
-            String sub = filteredCryptogram.substring(i, i + 7);
+            String sub = cryptogram.substring(i, i + 5);
             Integer counter = map.get(sub);
             if (counter == null) {
                 counter = 0;
@@ -65,12 +65,19 @@ public class VigenereDecrypter {
         map = sortByValue(map);
         ArrayList<Map.Entry<String,Integer>> entries = new ArrayList<>(map.entrySet());
         int j = entries.size()-1;
-        while ( j >= 0 && mostCommonSubstrings.size() < 3) {
-            if (entries.get(j).getKey().length() > 3) {
+        while ( j >= 0 && mostCommonSubstrings.size() < 1) {
+            if (entries.get(j).getKey().length() >= 3 && onlyAlpha(entries.get(j).getKey())) {
                 mostCommonSubstrings.add(entries.get(j).getKey());
             }
             --j;
         }
+    }
+
+    private boolean onlyAlpha(String word) {
+        for (char c: word.toCharArray()) {
+            if (!Character.isAlphabetic(c)) return false;
+        }
+        return true;
     }
 
     private Map<String, Integer> sortByValue(Map<String, Integer> unsortMap) {
@@ -173,6 +180,7 @@ public class VigenereDecrypter {
     private void computeDecyphedTexts() {
         decyphedTexts = new ArrayList<>();
         for (int i = 0; i < possibleKeys.size(); ++i) {
+            System.out.println("Estoy en la iteracion " + i + " de " + possibleKeys.size());
             String possibleKey = possibleKeys.get(i);
             int actKeyChar = 0;
             String decryptedText = "";
