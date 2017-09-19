@@ -53,11 +53,11 @@ public class CaesarDecypher {
         for (int i = 0; i < 26; ++i) {
             int act = checkApperances(i);
             if (act > max) {
-                key = i;
+                key = 26 - i;
                 max = act;
             }
         }
-        decyphedText = decyphedTexts[key];
+        decyphedText = decyphedTexts[26 - key];
     }
 
     private int checkApperances(int i) {

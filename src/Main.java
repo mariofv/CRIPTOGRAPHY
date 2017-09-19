@@ -8,10 +8,10 @@ public class Main {
         String encryptredText;
 
         //CAESAR
-//        encryptredText = read("data/2017_09_08_17_45_54_mario.fernandez.Cesar");
-//        CaesarDecypher caesarDecrypter = new CaesarDecypher(encryptredText);
-//        caesarDecrypter.run();
-//        write("data/MarioFernandezVillalba_" + caesarDecrypter.getKey() + ".Cesar", caesarDecrypter.getDecyphedText());
+        encryptredText = read("data/2017_09_08_17_45_54_mario.fernandez.Cesar");
+        CaesarDecypher caesarDecrypter = new CaesarDecypher(encryptredText);
+        caesarDecrypter.run();
+        write("data/MarioFernandezVillalba_" + caesarDecrypter.getKey() + ".Cesar", caesarDecrypter.getDecyphedText());
 
         //ESCITALO
 //        encryptredText = read("data/2017_09_08_17_45_54_mario.fernandez.Escitalo");
@@ -20,10 +20,10 @@ public class Main {
 //        write("data/MarioFernandezVillalba_" + escitaloDecrypter.getKey().get(0) + 'x' + escitaloDecrypter.getKey().get(1) + ".Escitalo", escitaloDecrypter.getDecryptedText());
 
         //VIGENERE
-        encryptredText = read("data/2017_09_08_17_45_54_mario.fernandez.Vigenere");
-        VigenereDecrypter vigenereDecrypter = new VigenereDecrypter(encryptredText);
-        vigenereDecrypter.run();
-        write("data/MarioFernandezVillalba_" + vigenereDecrypter.getKey() + ".Vigenere", vigenereDecrypter.getDecryptedText());
+//        encryptredText = read("data/2017_09_08_17_45_54_mario.fernandez.Vigenere");
+//        VigenereDecrypter vigenereDecrypter = new VigenereDecrypter(encryptredText);
+//        vigenereDecrypter.run();
+//        write("data/MarioFernandezVillalba_" + vigenereDecrypter.getKey() + ".Vigenere", vigenereDecrypter.getDecryptedText());
 
     }
 
