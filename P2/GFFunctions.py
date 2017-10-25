@@ -1,6 +1,7 @@
 from fractions import gcd
 from random import randint
 import time
+import sys
 
 def multPerX(a):
     result = (a << 1)&0xFF
@@ -23,38 +24,39 @@ def GF_product_p(a, b):
 
 
 def GF_tables():
-    exponencial = [None] * 256
-    logaritme = [None] * 256
+    exponencial = [None for x in range(255)]
+    logaritme = [None for x in range(256)]
     lastElement = 0x01
-    for i in range(1,256):
+    for i in range(255):
         lastElement = GF_product_p(0x03,lastElement);
         exponencial[i] = lastElement 
         logaritme[lastElement] = i
     return (exponencial, logaritme)
 
 
-def GF_product_t(a, b, exponencial, logaritme):
+[exponencial, logaritme] = GF_tables()
+
+def GF_product_t(a, b):
     if a == 0 or b == 0:
         return 0
-    #[exponencial, logaritme] = GF_tables()
-    return exponencial[(logaritme[a] + logaritme[b])%256]
+    global exponencial, logaritme
+    return exponencial[(logaritme[a] + logaritme[b] + 1)%255]
         
 def GF_generador():
     generadors = []
-    [exponencial, logaritme] = GF_tables()
-    for i in range(1, len(exponencial)):
-        if gcd(i,255) == 1:
+    global exponencial, logaritme
+    for i in range(len(exponencial)):
+        if gcd(i+1,255) == 1:
             generadors.append(exponencial[i])
     return generadors
 
 def GF_invers(a):
     if a == 0:
-        return 0
-    [exponencial, logaritme] = GF_tables()
-    return exponencial[255-logaritme[a]]
+        return a
+    global exponencial, logaritme
+    return exponencial[254-(logaritme[a]+1)]
 
 
-[exponencial, logaritme] = GF_tables()
 with open('GF_product_p_vs_GF_product_t.txt','w') as f:
     f.write("{:<15}{:<15}{:<30}{:<50}\n".format('a','b',"GF_product_p","GF_product_t"))
     for i in range(1,1000):
@@ -67,7 +69,7 @@ with open('GF_product_p_vs_GF_product_t.txt','w') as f:
         timeMicroP = (end - start) * 10**6
         
         start = time.time()
-        GF_product_t(a,b,exponencial,logaritme)
+        GF_product_t(a,b)
         end = time.time()
         timeMicroT = (end - start) * 10**6
         
@@ -88,7 +90,7 @@ with open('GF_product_p(a,0x02)_vs_GF_product_t(a,0x02).txt','w') as f:
         timeMicroP = (end - start) * 10**6
         
         start = time.time()
-        GF_product_t(a,b,exponencial,logaritme)
+        GF_product_t(a,b)
         end = time.time()
         timeMicroT = (end - start) * 10**6
         
@@ -109,7 +111,7 @@ with open('GF_product_p(a,0x03)_vs_GF_product_t(a,0x03).txt','w') as f:
         timeMicroP = (end - start) * 10**6
         
         start = time.time()
-        GF_product_t(a,b,exponencial,logaritme)
+        GF_product_t(a,b)
         end = time.time()
         timeMicroT = (end - start) * 10**6
         
@@ -130,7 +132,7 @@ with open('GF_product_p(a,0x09)_vs_GF_product_t(a,0x09).txt','w') as f:
         timeMicroP = (end - start) * 10**6
         
         start = time.time()
-        GF_product_t(a,b,exponencial,logaritme)
+        GF_product_t(a,b)
         end = time.time()
         timeMicroT = (end - start) * 10**6
         
@@ -151,7 +153,7 @@ with open('GF_product_p(a,0x0B)_vs_GF_product_t(a,0x0B).txt','w') as f:
         timeMicroP = (end - start) * 10**6
         
         start = time.time()
-        GF_product_t(a,b,exponencial,logaritme)
+        GF_product_t(a,b)
         end = time.time()
         timeMicroT = (end - start) * 10**6
         
@@ -172,7 +174,7 @@ with open('GF_product_p(a,0x0D)_vs_GF_product_t(a,0x0D).txt','w') as f:
         timeMicroP = (end - start) * 10**6
         
         start = time.time()
-        GF_product_t(a,b,exponencial,logaritme)
+        GF_product_t(a,b)
         end = time.time()
         timeMicroT = (end - start) * 10**6
         
@@ -193,7 +195,7 @@ with open('GF_product_p(a,0x0E)_vs_GF_product_t(a,0x0E).txt','w') as f:
         timeMicroP = (end - start) * 10**6
         
         start = time.time()
-        GF_product_t(a,b,exponencial,logaritme)
+        GF_product_t(a,b)
         end = time.time()
         timeMicroT = (end - start) * 10**6
         
@@ -203,3 +205,8 @@ f.closed
 
 
 
+
+
+
+        
+        
