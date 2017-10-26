@@ -21,27 +21,22 @@ def RotByte(word):
         word [i] = word [i+1]
     word[3] = firstByte
  
-
-def byteSubAux(bits):
-    l0 = [bits[7]*x for x in [1,1,1,1,1,0,0,0]]
-    l1 = [bits[6]*x for x in [0,1,1,1,1,1,0,0]]
-    l2 = [bits[5]*x for x in [0,0,1,1,1,1,1,0]]
-    l3 = [bits[4]*x for x in [0,0,0,1,1,1,1,1]]
-    l4 = [bits[3]*x for x in [1,0,0,0,1,1,1,1]]
-    l5 = [bits[2]*x for x in [1,1,0,0,0,1,1,1]]
-    l6 = [bits[1]*x for x in [1,1,1,0,0,0,1,1]]
-    l7 = [bits[0]*x for x in [1,1,1,1,0,0,0,1]]
-    uns = [1,1,0,0,0,1,1,0]
-    mapl = addLists([l0,l1,l2,l3,l4,l5,l6,l7,uns])
-    newBits = list(mapl)
-    newBits.reverse()
-    return newBits
- 
 def ByteSubWord(word):
     for i in range(len(word)):
         byte = GF_invers(word[i])
         bits = byte2bits(byte)
-        word[i] = bits2byte(byteSubAux(bits))
+        l0 = [bits[7]*x for x in [1,1,1,1,1,0,0,0]]
+        l1 = [bits[6]*x for x in [0,1,1,1,1,1,0,0]]
+        l2 = [bits[5]*x for x in [0,0,1,1,1,1,1,0]]
+        l3 = [bits[4]*x for x in [0,0,0,1,1,1,1,1]]
+        l4 = [bits[3]*x for x in [1,0,0,0,1,1,1,1]]
+        l5 = [bits[2]*x for x in [1,1,0,0,0,1,1,1]]
+        l6 = [bits[1]*x for x in [1,1,1,0,0,0,1,1]]
+        l7 = [bits[0]*x for x in [1,1,1,1,0,0,0,1]]
+        ones = [1,1,0,0,0,1,1,0]
+        newBits = list(addLists([l0,l1,l2,l3,l4,l5,l6,l7,ones]))
+        newBits.reverse()
+        word[i] = bits2byte(newBits)
  
 def ByteSub(block):
     for i in range(len(block)):
