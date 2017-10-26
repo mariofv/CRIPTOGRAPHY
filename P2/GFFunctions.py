@@ -57,7 +57,7 @@ def GF_invers(a):
     return exponencial[254-(logaritme[a]+1)]
 
 
-with open('GF_product_p_vs_GF_product_t.txt','w') as f:
+with open('./out/GF_product_p_vs_GF_product_t.txt','w') as f:
     f.write("{:<15}{:<15}{:<30}{:<50}\n".format('a','b',"GF_product_p","GF_product_t"))
     for i in range(1,1000):
         a = randint(0, 255)
@@ -77,7 +77,7 @@ with open('GF_product_p_vs_GF_product_t.txt','w') as f:
 
 f.closed
 
-with open('GF_product_p(a,0x02)_vs_GF_product_t(a,0x02).txt','w') as f:
+with open('./out/GF_product_p(a,0x02)_vs_GF_product_t(a,0x02).txt','w') as f:
     f.write("{:<15}{:<15}{:<30}{:<50}\n".format('a','b',"GF_product_p","GF_product_t"))
     [exponencial, logaritme] = GF_tables()
     for i in range(1,1000):
@@ -98,7 +98,7 @@ with open('GF_product_p(a,0x02)_vs_GF_product_t(a,0x02).txt','w') as f:
 
 f.closed
     
-with open('GF_product_p(a,0x03)_vs_GF_product_t(a,0x03).txt','w') as f:
+with open('./out/GF_product_p(a,0x03)_vs_GF_product_t(a,0x03).txt','w') as f:
     f.write("{:<15}{:<15}{:<30}{:<50}\n".format('a','b',"GF_product_p","GF_product_t"))
     [exponencial, logaritme] = GF_tables()
     for i in range(1,1000):
@@ -119,7 +119,7 @@ with open('GF_product_p(a,0x03)_vs_GF_product_t(a,0x03).txt','w') as f:
 
 f.closed
 
-with open('GF_product_p(a,0x09)_vs_GF_product_t(a,0x09).txt','w') as f:
+with open('./out/GF_product_p(a,0x09)_vs_GF_product_t(a,0x09).txt','w') as f:
     f.write("{:<15}{:<15}{:<30}{:<50}\n".format('a','b',"GF_product_p","GF_product_t"))
     [exponencial, logaritme] = GF_tables()
     for i in range(1,1000):
@@ -140,7 +140,7 @@ with open('GF_product_p(a,0x09)_vs_GF_product_t(a,0x09).txt','w') as f:
 
 f.closed
 
-with open('GF_product_p(a,0x0B)_vs_GF_product_t(a,0x0B).txt','w') as f:
+with open('./out/GF_product_p(a,0x0B)_vs_GF_product_t(a,0x0B).txt','w') as f:
     f.write("{:<15}{:<15}{:<30}{:<50}\n".format('a','b',"GF_product_p","GF_product_t"))
     [exponencial, logaritme] = GF_tables()
     for i in range(1,1000):
@@ -161,7 +161,7 @@ with open('GF_product_p(a,0x0B)_vs_GF_product_t(a,0x0B).txt','w') as f:
 
 f.closed
 
-with open('GF_product_p(a,0x0D)_vs_GF_product_t(a,0x0D).txt','w') as f:
+with open('./out/GF_product_p(a,0x0D)_vs_GF_product_t(a,0x0D).txt','w') as f:
     f.write("{:<15}{:<15}{:<30}{:<50}\n".format('a','b',"GF_product_p","GF_product_t"))
     [exponencial, logaritme] = GF_tables()
     for i in range(1,1000):
@@ -182,7 +182,7 @@ with open('GF_product_p(a,0x0D)_vs_GF_product_t(a,0x0D).txt','w') as f:
 
 f.closed
 
-with open('GF_product_p(a,0x0E)_vs_GF_product_t(a,0x0E).txt','w') as f:
+with open('./out/GF_product_p(a,0x0E)_vs_GF_product_t(a,0x0E).txt','w') as f:
     f.write("{:<15}{:<15}{:<30}{:<50}\n".format('a','b',"GF_product_p","GF_product_t"))
     [exponencial, logaritme] = GF_tables()
     for i in range(1,1000):
