@@ -31,6 +31,12 @@ def addLists(llistes):
         result = map(bitWiseXor,result,llistes[i])
     return list(result)
 
+def addBlocks(blocks):
+    result = map(bitWiseXor,llistes[0],llistes[1])
+    for i in range(2, len(llistes)):
+        result = map(bitWiseXor,result,llistes[i])
+    return list(result)
+
 def addBlocks(blockA, blockB):
     result = list(blockA)
     for i in range(len(blockA)):
@@ -42,13 +48,21 @@ def printBlockHex(block):
         print("")
         for j in range(len(block[i])):
             print("{} ".format(hex(block[i][j])), end='')
- 
- 
-def generateRandomKey():
-    chars = string.ascii_letters + string.digits
-    return ''.join(random.choice(chars) for _ in range(32))
 
-def generateRandomText(maxLength):
+def generateRandomText(maxLength = -1):
     chars = string.ascii_letters + string.digits
-    length = randint(0, maxLength)
+    if maxLength <= 0:
+        length = 32 
+    else:
+        length = randint(1, maxLength)
     return ''.join(random.choice(chars) for _ in range(length))
+
+def changeBitBlock(block, bit):
+    newBlock = list(block)
+    byte2select = bit//8
+    bit2select = bit%8
+    selectedByte = newBlock[byte2select//4][byte2select%4]
+    bits = byte2bits(selectedByte)
+    bits[bit2select] = not (bits[bit2select])
+    newBlock[byte2select//4][byte2select%4] = bits2byte(bits)
+    return newBlock

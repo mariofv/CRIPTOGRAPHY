@@ -21,6 +21,9 @@ def RotByte(word):
         word [i] = word [i+1]
     word[3] = firstByte
  
+def ByteSubWord(word):
+    pass
+ 
 def ByteSub(block):
     pass
  
