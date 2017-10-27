@@ -1,3 +1,7 @@
+import string
+import random
+from random import randint
+
 def byte2bits(byte):
     bits = []
 
@@ -39,3 +43,12 @@ def printBlockHex(block):
         for j in range(len(block[i])):
             print("{} ".format(hex(block[i][j])), end='')
  
+ 
+def generateRandomKey():
+    chars = string.ascii_letters + string.digits
+    return ''.join(random.choice(chars) for _ in range(32))
+
+def generateRandomText(maxLength):
+    chars = string.ascii_letters + string.digits
+    length = randint(0, maxLength)
+    return ''.join(random.choice(chars) for _ in range(length))
