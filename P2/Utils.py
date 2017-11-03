@@ -57,12 +57,15 @@ def generateRandomText(maxLength = -1):
         length = randint(1, maxLength)
     return ''.join(random.choice(chars) for _ in range(length))
 
+def negateBit(bit):
+    return 0 if bit == 1 else 1
+
 def changeBitBlock(block, bit):
     newBlock = list(block)
     byte2select = bit//8
     bit2select = bit%8
     selectedByte = newBlock[byte2select//4][byte2select%4]
     bits = byte2bits(selectedByte)
-    bits[bit2select] = not (bits[bit2select])
+    bits[bit2select] = negateBit(bits[bit2select])
     newBlock[byte2select//4][byte2select%4] = bits2byte(bits)
     return newBlock
