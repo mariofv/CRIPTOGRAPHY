@@ -1,19 +1,16 @@
 from GFFunctions import *
 from Utils import *
 
-Nr = 10
-Nk = 128/32
-Nb = 4
+Nr = 0
+Nk = 0
+Nb = 0
 
 def initializeRcon():
-    global Nr
     Rcon = [[0 for x in range(4)] for y in range(10)]
     Rcon[0][0] = 1
     for j in range(1,10):
         Rcon[j][0] = GF_product_t(2, Rcon[j-1][0])
     return Rcon
-
-Rcon = initializeRcon()
 
 def RotByte(word):
     firstByte = word[0]
@@ -43,25 +40,26 @@ def ByteSub(block):
         ByteSubWord(block[i])
  
 def KeyExpansion(key):
-    global Nr, Nk, Nb, Rcon
-    W = [[0 for x in range(4)] for y in range(4*(Nr +1))]
-    
+    global Nr, Nk, Nb
+    Rcon = initializeRcon()
+    W = [[0 for x in range(len(key[0]))] for y in range(len(key)*(Nr +1))]
     # Initial copy of the cypher key
-    for i in range(4):
+    for i in range(Nk):
         for j in range(4):
             W[i][j] = key[i][j]
     
     # Main loop
     for i in range(1, Nr+1):
-        lastWord = list(W[3 + 4*(i-1)])
+        lastWord = list(W[Nk-1 + Nk*(i-1)])
         RotByte(lastWord)
         ByteSubWord(lastWord)
-        W[4*i] = addLists([W[4*(i-1)], lastWord, Rcon[i-1]])
-        lastWord = W[4*i]
-        for j in range(1,4):
-            W[4*i + j] = addLists([lastWord, W[4*(i-1) + j]])
-            lastWord = W[4*i + j]
+        W[Nk*i] = addLists([W[Nk*(i-1)], lastWord, Rcon[i-1]])
+        lastWord = W[Nk*i]
+        for j in range(1,Nk):
+            W[Nk*i + j] = addLists([lastWord, W[Nk*(i-1) + j]])
+            lastWord = W[Nk*i + j]
     return W
+
 
 
 def ShiftRow(block):
@@ -90,7 +88,15 @@ def AddRoundKey(state, roundKey):
         state[i] = addLists([state[i], roundKey[i]])
     
 def AES128(block, key):
-    global Nr
+    global Nk, Nb, Nr
+    Nb = len(block) * len(block[0]) * 8 // 32
+    Nk = len(key) * len(key[0]) * 8 // 32
+    if Nk == 8 or Nb == 8:
+        Nr = 14
+    elif Nk == 6 or Nb == 6:
+        Nr = 12
+    else:
+        Nr = 10
     state = list(block)
     roundKeys = KeyExpansion(key)
     AddRoundKey(state, roundKeys[0:4])

@@ -1,19 +1,17 @@
 from GFFunctions import *
 from Utils import *
+import sys
 
 Nr = 12
-Nk = 192/32
-Nb = 4
+Nk = 0
+Nb = 0
 
 def initializeRcon():
-    global Nr
-    Rcon = [[0 for x in range(4)] for y in range(10)]
+    Rcon = [[0 for x in range(4)] for y in range(Nr)]
     Rcon[0][0] = 1
-    for j in range(1,10):
+    for j in range(1,Nr):
         Rcon[j][0] = GF_product_t(2, Rcon[j-1][0])
     return Rcon
-
-Rcon = initializeRcon()
 
 def RotByte(word):
     firstByte = word[0]
@@ -24,16 +22,17 @@ def RotByte(word):
 def InvRotByte(word):
     lastByte = word[3]
     for i in range(1,4):
-        word [i] = word [(i+1)%4]
+        j = 4-i
+        word [j] = word [j-1]
     word[0] = lastByte
 
  
 def InvByteSubWord(word):
+    ones = [1,1,0,0,0,1,1,0]
+    ones.reverse()
     for i in range(len(word)):
-        byte = GF_invers(word[i])
-        bits = byte2bits(byte)
-        negOnes = [-1,-1,0,0,0,-1,-1,0]
-        bits = addLists([bits,negOnes])
+        bits = byte2bits(word[i])
+        bits = list(addLists([bits,ones]))
         l0 = [bits[7]*x for x in [0,1,0,1,0,0,1,0]]
         l1 = [bits[6]*x for x in [0,0,1,0,1,0,0,1]]
         l2 = [bits[5]*x for x in [1,0,0,1,0,1,0,0]]
@@ -44,7 +43,8 @@ def InvByteSubWord(word):
         l7 = [bits[0]*x for x in [1,0,1,0,0,1,0,0]]
         newBits = list(addLists([l0,l1,l2,l3,l4,l5,l6,l7]))
         newBits.reverse()
-        word[i] = bits2byte(newBits)
+        word[i] = GF_invers(bits2byte(newBits))
+
  
 def InvByteSub(block):
     for i in range(len(block)):
@@ -72,24 +72,24 @@ def ByteSub(block):
         ByteSubWord(block[i])
  
 def KeyExpansion(key):
-    global Nr, Nk, Nb, Rcon
-    W = [[0 for x in range(4)] for y in range(4*(Nr +1))]
-    
+    global Nr, Nk, Nb
+    Rcon = initializeRcon()
+    W = [[0 for x in range(len(key[0]))] for y in range(len(key)*(Nr +1))]
     # Initial copy of the cypher key
-    for i in range(4):
+    for i in range(Nk):
         for j in range(4):
             W[i][j] = key[i][j]
     
     # Main loop
     for i in range(1, Nr+1):
-        lastWord = list(W[3 + 4*(i-1)])
+        lastWord = list(W[Nk-1 + Nk*(i-1)])
         RotByte(lastWord)
         ByteSubWord(lastWord)
-        W[4*i] = addLists([W[4*(i-1)], lastWord, Rcon[i-1]])
-        lastWord = W[4*i]
-        for j in range(1,4):
-            W[4*i + j] = addLists([lastWord, W[4*(i-1) + j]])
-            lastWord = W[4*i + j]
+        W[Nk*i] = addLists([W[Nk*(i-1)], lastWord, Rcon[i-1]])
+        lastWord = W[Nk*i]
+        for j in range(1,Nk):
+            W[Nk*i + j] = addLists([lastWord, W[Nk*(i-1) + j]])
+            lastWord = W[Nk*i + j]
     return W
 
 
@@ -119,17 +119,27 @@ def AddRoundKey(state, roundKey):
         state[i] = addLists([state[i], roundKey[i]])    
     
 def AES128Decoder(block, key):
-    global Nr
+    global Nk, Nb, Nr
+    Nb = len(block) * len(block[0]) * 8 // 32
+    Nk = len(key) * len(key[0]) * 8 // 32
+    if Nk == 8 or Nb == 8:
+        Nr = 14
+    elif Nk == 6 or Nb == 6:
+        Nr = 12
+    else:
+        Nr = 10
     state = list(block)
     roundKeys = KeyExpansion(key)
-    AddRoundKey(state, roundKeys[0:4])
+    AddRoundKey(state, roundKeys[4*Nr:4*(Nr+1)])
     for i in range(1, Nr):
+        j = Nr - i
         InvByteSub(state)
         InvShiftRow(state)
         InvMixColumn(state)
-        invRoundKey_i = InvMixColumn(list(roundKeys[4*i:4*(i+1)]))
+        invRoundKey_i = list(roundKeys[4*j:4*(j+1)])
+        InvMixColumn(invRoundKey_i)
         AddRoundKey(state, invRoundKey_i)
     InvByteSub(state)
     InvShiftRow(state)
-    AddRoundKey(state, roundKeys[4*Nr:4*(Nr+1)])
+    AddRoundKey(state,  roundKeys[0:4])
     return state

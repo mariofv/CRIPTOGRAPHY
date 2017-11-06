@@ -1,6 +1,7 @@
 import string
 import random
 import copy
+import binascii
 from random import randint
 
 def byte2bits(byte):
@@ -23,11 +24,11 @@ def bits2byte(bits):
         byte += bits[i]*pow(2,7-i)
     return byte
  
-def block2String(block):
+def block2String(block, encodingType):
     text = ""
     for i in range(len(block)):
-        for j in range(len(block[i])):
-            text = text + (bytes.fromhex(hex(block[i][j])).decode('utf-8'))
+        text = text + bytes(block[i]).decode(encodingType)
+    return text
  
 def bitWiseXor(a,b):
     return a^b

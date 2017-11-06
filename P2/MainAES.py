@@ -1,4 +1,6 @@
 import sys
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from random import randint
 from AES import AES128
@@ -14,51 +16,53 @@ import sys
 
 # 2.1.1  
 
-#with open('./out/CheckAESByteSubIdentityCypher.txt','w') as f:
-    #f.write("CheckAESCypher(AES, C, i, j) = 1 -> Given a AES implementation ('ByteSubIdentity', 'regular'), a cypher text and 2 integers i j; C == C_i + C_j + C_ij (+ means exclusive or)\n")
-    #f.write("CheckAESCypher(AES, C, i, j) = 0 -> Given a AES implementation ('ByteSubIdentity', 'regular'), a cypher text and 2 integers i j; C != C_i + C_j + C_ij (+ means exclusive or)\n\n\n")
-    #f.write("{:<40}{:<40}{:<8}{:<8}{:<40}{:<40}\n".format("text","key",'i','j',"CheckAESCypher('regular', C, i, j)", "CheckAESCypher('ByteSubIdentity', C, i, j)"))
-    #for i in range(32):
-        #for j in range(32):
-            #key = generateRandomText()
-            #keyBlock = ECB128(key,"utf-8")[0]
-            #text = generateRandomText(32)
-            #blocks = ECB128(text,"utf-8")
-            #checkRegular = 0
-            #checkIdentity = 1
-            #for k in range(len(blocks)):
-                #block = blocks[k]
-                #block_i = changeBitBlock(block, i)
-                #block_j = changeBitBlock(block, j)
-                #block_ij = changeBitBlock(block_i, j)
+with open('./out/CheckAESByteSubIdentityCypher.txt','w') as f:
+    f.write("CheckAESCypher(AES, C, i, j) = 1 -> Given a AES implementation ('ByteSubIdentity', 'regular'), a cypher text and 2 integers i j; C == C_i + C_j + C_ij (+ means exclusive or)\n")
+    f.write("CheckAESCypher(AES, C, i, j) = 0 -> Given a AES implementation ('ByteSubIdentity', 'regular'), a cypher text and 2 integers i j; C != C_i + C_j + C_ij (+ means exclusive or)\n\n\n")
+    f.write("{:<40}{:<40}{:<8}{:<8}{:<40}{:<40}\n".format("text","key",'i','j',"CheckAESCypher('regular', C, i, j)", "CheckAESCypher('ByteSubIdentity', C, i, j)"))
+    for experiment in range(1000):
+        i = randint(0, 127)
+        j = randint(0, 127)
+        key = generateRandomText()
+        keyBlock = ECB128(key,"utf-8")[0]
+        text = generateRandomText(32)
+        blocks = ECB128(text,"utf-8")
+        checkRegular = 0
+        checkIdentity = 1
+        for k in range(len(blocks)):
+            block = blocks[k]
+            block_i = changeBitBlock(block, i)
+            block_j = changeBitBlock(block, j)
+            block_ij = changeBitBlock(block_i, j)
+            
+            C = AES128(block, keyBlock)
+            C_i = AES128(block_i, keyBlock)
+            C_j = AES128(block_j, keyBlock)
+            C_ij = AES128(block_ij, keyBlock)
+            
+            if checkSum(C,[C_i, C_j, C_ij]):
+                checkRegular = 1                                        
+            
+            C = AES128ByteSubIdentity(block, keyBlock)
+            C_i = AES128ByteSubIdentity(block_i, keyBlock)
+            C_j = AES128ByteSubIdentity(block_j, keyBlock)
+            C_ij = AES128ByteSubIdentity(block_ij, keyBlock)
+            
+            if not checkSum(C,[C_i, C_j, C_ij]):
+                checkIdentity = 0
                 
-                #C = AES128(block, keyBlock)
-                #C_i = AES128(block_i, keyBlock)
-                #C_j = AES128(block_j, keyBlock)
-                #C_ij = AES128(block_ij, keyBlock)
-                
-                #if checkSum(C,[C_i, C_j, C_ij]):
-                    #checkRegular = 1                                        
-                
-                #C = AES128ByteSubIdentity(block, keyBlock)
-                #C_i = AES128ByteSubIdentity(block_i, keyBlock)
-                #C_j = AES128ByteSubIdentity(block_j, keyBlock)
-                #C_ij = AES128ByteSubIdentity(block_ij, keyBlock)
-                
-                #if not checkSum(C,[C_i, C_j, C_ij]):
-                    #checkIdentity = 0
-                    
-            #f.write("{:<40}{:<40}{:<8}{:<8}{:<40}{:<40}\n".format(text,key,i,j, checkRegular, checkIdentity))
+        f.write("{:<40}{:<40}{:<8}{:<8}{:<40}{:<40}\n".format(text,key,i,j, checkRegular, checkIdentity))
 
-#f.closed
+f.closed
 
 # 2.1.2  
 
 with open('./out/CheckAESShiftRowIdentityCypher.txt','w') as f:
-    for i in range(32):
+    for k in range(10):
+        i = randint(0, 127)
         key = generateRandomText()
         keyBlock = ECB128(key,"utf-8")[0]
-        text = generateRandomText(32)
+        text = generateRandomText()
         blocks = ECB128(text,"utf-8")
         block = blocks[0]
         C = AES128ShiftRowIdentity(block, keyBlock)
@@ -84,10 +88,11 @@ f.closed
 # 2.1.3  
 
 with open('./out/CheckAESMixColumnIdentityCypher.txt','w') as f:
-    for i in range(32):
+     for k in range(10):
+        i = randint(0, 127)
         key = generateRandomText()
         keyBlock = ECB128(key,"utf-8")[0]
-        text = generateRandomText(32)
+        text = generateRandomText()
         blocks = ECB128(text,"utf-8")
         block = blocks[0]
         C = AES128MixColumnIdentity(block, keyBlock)
@@ -145,47 +150,35 @@ for i in range(128):
 # Histogram of # changed bits changing a bit in message
 fig, ax = plt.subplots()
 ax.bar(x_axis, y_axis_bits_message, width = 0.8, align="center")
-ax.set_xticks(range(128))
-ax.set_yticks(range(max(y_axis_bits_message)+ 1))
-plt.setp(ax.get_xticklabels(), fontsize=8, rotation='vertical')
 plt.xlabel('# changed bits')
 plt.ylabel('# apperances')
-plt.title('Histogram of # changed bits changing bits in M')
 plt.show()
+plt.savefig('./out/hist1.png', bbox_inches='tight')
 plt.close(fig)
 
 # Histogram of # positions changed changing bit in message
 fig, ax = plt.subplots()
 ax.bar(x_axis, y_axis_pos_message, width = 0.8, align="center")
-ax.set_xticks(range(128))
-ax.set_yticks(range(max(y_axis_pos_message)+ 1))
-plt.setp(ax.get_xticklabels(), fontsize=8, rotation='vertical')
 plt.xlabel('Bit position')
 plt.ylabel('# apperances')
-plt.title('Histogram of changed position changing bits in M')
 plt.show()
+plt.savefig('./out/hist2.png', bbox_inches='tight')
 plt.close(fig)
 
 # Histogram of # changed bits changing a bit in key
 fig, ax = plt.subplots()
 ax.bar(x_axis, y_axis_bits_key, width = 0.8, align="center")
-ax.set_xticks(range(128))
-ax.set_yticks(range(max(y_axis_bits_key)+ 1))
-plt.setp(ax.get_xticklabels(), fontsize=8, rotation='vertical')
 plt.xlabel('# changed bits')
 plt.ylabel('# apperances')
-plt.title('Histogram of # changed bits changing bits in K')
 plt.show()
+plt.savefig('./out/hist3.png', bbox_inches='tight')
 plt.close(fig)
 
 # Histogram of # positions changed changing bit in key
 fig, ax = plt.subplots()
 ax.bar(x_axis, y_axis_pos_key, width = 0.8, align="center")
-ax.set_xticks(range(128))
-ax.set_yticks(range(max(y_axis_pos_key)+ 1))
-plt.setp(ax.get_xticklabels(), fontsize=8, rotation='vertical')
 plt.xlabel('Bit position')
 plt.ylabel('# apperances')
-plt.title('Histogram of changed position changing bits in K')
 plt.show()
+plt.savefig('./out/hist4.png', bbox_inches='tight')
 plt.close(fig)
