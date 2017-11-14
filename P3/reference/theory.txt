@@ -1,0 +1,16 @@
+p,q primos
+n = p*q
+e = 2^16 + 1
+o(n) = (p-1)(q-1)
+n = \pitatori(p_i)^e_i
+(e, o(n)) = 1 -> e*d = 1 mod o(n) # coprimos con cierta d
+d = e^-1 mod o(n)
+
+
+c = m*e mod n
+m = c^d mod n
+
+{e,n} publica
+{e,m 
+
+OPENSSL RSA -PUBIN publickey.pem -TEXT
